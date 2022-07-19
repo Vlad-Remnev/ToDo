@@ -1,0 +1,9 @@
+.activeDone {
+    font-weight: bold;
+    color: white;
+}
+
+.isDone {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
