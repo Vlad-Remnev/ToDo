@@ -9,7 +9,6 @@ interface IToDoLists {
     id: string
     title: string
     filter: IFilter
-    tasks: Array<ITasks>
 }
 
 interface ITasksState {
@@ -26,20 +25,12 @@ function App() {
             {
                 id: todolistID1,
                 title: 'What to Learn',
-                filter: 'all',
-                tasks: [
-                    {id: v1(), title: 'CSS', isDone: true},
-                    {id: v1(), title: 'HTML', isDone: true}
-                ]
+                filter: 'all'
             },
             {
                 id: todolistID2,
                 title: 'What to Buy',
-                filter: 'all',
-                tasks: [
-                    {id: v1(), title: 'JS', isDone: false},
-                    {id: v1(), title: 'React', isDone: false}
-                ]
+                filter: 'all'
             }
         ]
     )
@@ -57,69 +48,37 @@ function App() {
         ]
     })
 
-    // const [tasks, setTasks] = useState<Array<ITasks>>([
-    //     {id: v1(), title: 'CSS', isDone: true},
-    //     {id: v1(), title: 'HTML', isDone: true},
-    //     {id: v1(), title: 'JS', isDone: false},
-    //     {id: v1(), title: 'React', isDone: false},
-    // ])
-    // const [filter, setFilter] = useState<IFilter>('all')
-
     const changeFilter = (value: IFilter, todoListId: string) => {
-        let todolist = todoLists.find(tl => tl.id === todoListId)
-        if (todolist) {
-            todolist.filter = value
-            setTodoLists([...todoLists])
-        }
+        setTodoLists(todoLists.map(todoList => todoList.id === todoListId ? {...todoList, filter: value} : todoList))
     }
 
     const removeTask = (id: string, todoListId: string) => {
-        let resultTasks = tasks[todoListId]
-        tasks[todoListId] = resultTasks.filter(task => task.id !== id)
-        setTasks({...tasks})
+        setTasks({...tasks, [todoListId]: tasks[todoListId].filter(task => task.id !== id)})
     } // функция удаления таски, благодаря useState компонента перерисовывается
 
     const addTask = (title: string, todoListId: string) => {
         let newTask = {id: v1(), title: title, isDone: false}
-        let toDoListTasks = tasks[todoListId]
-        tasks[todoListId] = [newTask, ...toDoListTasks]
-        setTasks({...tasks})
-
+        setTasks({...tasks, [todoListId]: [newTask, ...tasks[todoListId]]})
     } // делаем наш стейт иммутабельным для изменения
 
-    const changeStatus = (taskId: string, isDone: boolean , todoListId: string) => {
-        let toDoListTask = tasks[todoListId]
-        let task = toDoListTask.find(task => task.id === taskId)
-        if(task) {
-            task.isDone = isDone
-            setTasks({...tasks})
-        }
+    const changeStatus = (taskId: string, isDone: boolean, todoListId: string) => {
+        setTasks({...tasks, [todoListId]: tasks[todoListId].map(task => task.id === taskId ? {...task, isDone} : task)})
     }
 
     const removeTodoList = (todoListId: string) => {
-        setTodoLists(todoLists.filter(todolist => todolist.id !== todoListId))
+        setTodoLists(todoLists.filter(todoList => todoList.id !== todoListId))
         delete tasks[todoListId]
-        setTasks({...tasks})
     }
 
     return (
         <div className="App">
             {
                 todoLists.map(todoList => {
-                    let allToDoListTasks = tasks[todoList.id]
-                    let tasksForTodoList = allToDoListTasks
-                    if (todoList.filter === 'completed') {
-                        tasksForTodoList = tasksForTodoList.filter(task => task.isDone)
-                    }
-
-                    if (todoList.filter === 'active') {
-                        tasksForTodoList = tasksForTodoList.filter(task => !task.isDone)
-                    }
                     return <Todo
                         key={todoList.id}
                         id={todoList.id}
                         title={todoList.title}
-                        tasks={tasksForTodoList}
+                        tasks={tasks}
                         removeTask={removeTask}
                         removeTodoList={removeTodoList}
                         changeFilter={changeFilter}

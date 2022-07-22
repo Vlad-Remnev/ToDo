@@ -3,6 +3,7 @@ import {IFilter} from "../App";
 import {Button} from "./Button";
 import {InputText} from "./InputText/InputText";
 import {InputCheckBox} from "./InputCheckBox/InputCheckBox";
+import {Tasks} from "./Tasks";
 
 export interface ITasks {
     id: string
@@ -13,7 +14,7 @@ export interface ITasks {
 interface ITodo {
     title: string
     id: string
-    tasks: ITasks[]
+    tasks: {[key:string]: ITasks[]}
     removeTask: (id: string, todoListId: string) => void
     removeTodoList: (todoListId: string) => void
     changeFilter: (value: IFilter, todoListId: string) => void
@@ -28,23 +29,16 @@ export const Todo: FC<ITodo> = ({title, id, tasks, removeTask, changeFilter, add
     const onAllClickHandler = () => changeFilter('all', id)
     const onActiveClickHandler = () => changeFilter('active', id)
     const onCompletedClickHandler = () => changeFilter('completed', id)
+    //условия для работы фильтрации
+    let allToDoListTasks = tasks[id]
+    if (filter === 'completed') {
+        allToDoListTasks = allToDoListTasks.filter(task => task.isDone)
+    }
+    if (filter === 'active') {
+        allToDoListTasks = allToDoListTasks.filter(task => !task.isDone)
+    }
+    //функция удаления ToDoList с тасками
     const onRemoveTodoList = () => removeTodoList(id)
-
-    const tasksList = tasks.length
-        ? tasks.map(task => {
-            return (
-                <li key={task.id}>
-                    <InputCheckBox title={task.title}
-                                   id={id}
-                                   type={'checkbox'}
-                                   taskId={task.id}
-                                   checked={task.isDone}
-                                   removeTaskTitle={removeTask}
-                                   onChecked={changeStatus}/>
-                </li>
-            )
-        })
-        : <span>No tasks</span>
     return (
         <div className='toDo'>
             <h3>{title} <Button title={'x'} onClick={onRemoveTodoList}/></h3>
@@ -60,7 +54,10 @@ export const Todo: FC<ITodo> = ({title, id, tasks, removeTask, changeFilter, add
                         className={filter === 'completed' ? 'filter-btn' + ' active-filter' : 'filter-btn'}/>
             </div>
             <ul>
-                {tasksList}
+                <Tasks tasks={allToDoListTasks}
+                       removeTask={removeTask}
+                       toDoListId={id}
+                       changeTaskStatus={changeStatus}/>
             </ul>
         </div>
     );
