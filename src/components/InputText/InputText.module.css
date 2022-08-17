@@ -1,19 +1,5 @@
-.okBorder {
-    border-color: rgb(94 234 212);
-    outline: none;
-}
-
-.error {
-    border: 1px solid red;
-    outline: none;
-}
-
-.sample {
-    height: 21px;
-    margin-bottom: 5px;
-}
-
-.errorMessage {
-    color: red;
-    margin-bottom: 5px;
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

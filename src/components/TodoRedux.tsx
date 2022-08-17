@@ -5,6 +5,10 @@ import {Tasks} from "./Tasks";
 import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
+import {addTaskAC, changeStatusTaskAC, changeTitleTaskAC, removeTaskAC} from "../reducers/taskReducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootState} from "../store/store";
+import {ITasksState} from "../AppWithRedux";
 
 export interface ITasks {
     id: string
@@ -15,37 +19,42 @@ export interface ITasks {
 interface ITodo {
     title: string
     id: string
-    tasks: { [key: string]: ITasks[] }
-    removeTask: (id: string, todoListId: string) => void
     removeTodoList: (todoListId: string) => void
     changeFilter: (value: IFilter, todoListId: string) => void
-    addTask: (title: string, todoListId: string) => void
-    changeStatus: (id: string, isDone: boolean, todoListId: string) => void
-    changeTitle: (id: string, newValue: string, todoListId: string) => void
     changeToDoListTitle: (newValue: string, todoListId: string) => void
     filter: IFilter
 }
 
-export const Todo: FC<ITodo> = ({
+export const TodoRedux: FC<ITodo> = ({
                                     title,
                                     id,
-                                    tasks,
-                                    removeTask,
                                     changeFilter,
-                                    addTask,
-                                    changeStatus,
                                     filter,
                                     removeTodoList,
-                                    changeTitle,
                                     changeToDoListTitle
                                 }) => {
+    const dispatch = useDispatch()
+
+    const tasks = useSelector<AppRootState, ITasks[]>(state => state.tasks[id] )
+
+    const removeTask = (id: string, todoListId: string) => {
+        dispatch(removeTaskAC(id, todoListId))
+    } // функция удаления таски, благодаря useState компонента перерисовывается
+
+    const changeStatus = (taskId: string, isDone: boolean, todoListId: string) => {
+        dispatch(changeStatusTaskAC(taskId, isDone, todoListId))
+    }
+
+    const changeTitle = (taskId: string, newTitle: string, todoListId: string) => {
+        dispatch(changeTitleTaskAC(taskId, newTitle, todoListId))
+    }
 
     //функции фильтра по кнопкам
     const onAllClickHandler = () => changeFilter('all', id)
     const onActiveClickHandler = () => changeFilter('active', id)
     const onCompletedClickHandler = () => changeFilter('completed', id)
     //условия для работы фильтрации
-    let allToDoListTasks = tasks[id]
+    let allToDoListTasks = tasks
     if (filter === 'completed') {
         allToDoListTasks = allToDoListTasks.filter(task => task.isDone)
     }
@@ -57,8 +66,8 @@ export const Todo: FC<ITodo> = ({
     const changeToDoListTitleHandler = (title: string) => {
         changeToDoListTitle(title, id)
     }
-    const addNewTask = (title: string) => {
-        addTask(title, id)
+    const addTask = (title: string) => {
+        dispatch(addTaskAC(title, id))
     }
     return (
         <div className='toDo'>
@@ -70,7 +79,7 @@ export const Todo: FC<ITodo> = ({
             </h3>
             <div className='mrg'>
                 <InputText type={'text'}
-                           onAdd={addNewTask}/>
+                           onAdd={addTask}/>
             </div>
             <div className='btn-filters'>
                 <Button onClick={onAllClickHandler}

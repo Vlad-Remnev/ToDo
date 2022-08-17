@@ -1,34 +1,48 @@
 import React, {ChangeEvent, FC} from 'react';
 import s from './InputCheckBox.module.css'
-import {Button} from "../Button";
+import {EditableSpan} from "../EditableSpan";
+import {Checkbox, IconButton} from "@mui/material";
+import {Delete} from "@mui/icons-material";
 
 interface IInputCheckBox {
     title: string
     id: string
-    type: string
     taskId: string
     checked: boolean
     removeTaskTitle: (id: string, todoListId: string) => void
     onChecked: (taskId: string, isDone: boolean, todoListId: string) => void
+    onChangeTaskTitle: (taskId: string, newValue: string, todoListId: string) => void
 }
 
-export const InputCheckBox: FC<IInputCheckBox> = ({title, type, taskId, checked, removeTaskTitle, onChecked, id}) => {
+export const InputCheckBox: FC<IInputCheckBox> = ({
+                                                      title,
+                                                      taskId,
+                                                      checked,
+                                                      removeTaskTitle,
+                                                      onChecked,
+                                                      id,
+                                                      onChangeTaskTitle
+                                                  }) => {
     //функция удаления по кнопке Х
     const onRemoveHandler = () => removeTaskTitle(taskId, id)
     //функция смены checked
     const onChangeCheckboxHandler = (event: ChangeEvent<HTMLInputElement>) => {
         onChecked(taskId, event.currentTarget.checked, id)
     }
+    const onChangeTitleHandler = (newValue: string) => {
+        onChangeTaskTitle(taskId, newValue, id)
+    }
     return (
         <>
             <div>
-                <label className={checked ? s.isDone : s.activeDone}>
-                <input type={type}
-                       onChange={onChangeCheckboxHandler}
-                       checked={checked}/>
-                {title}</label>
+                <Checkbox onChange={onChangeCheckboxHandler}
+                          checked={checked}
+                          color='primary'/>
+                <EditableSpan title={title} checked={checked} onChange={onChangeTitleHandler}/>
             </div>
-            <Button title={'X'} onClick={onRemoveHandler}/>
+            <IconButton onClick={onRemoveHandler} color="primary">
+                <Delete/>
+            </IconButton>
         </>
     );
 };
