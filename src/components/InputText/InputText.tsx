@@ -10,14 +10,13 @@ interface IInputText {
     className?: string
 }
 
-export const InputText: FC<IInputText> = ({type, value, onAdd, className}) => {
+export const InputText: FC<IInputText> = React.memo(({type, value, onAdd, className}) => {
     const [name, setName] = useState<string>(value || '')
     const [error, setError] = useState<string | null>(null)
 
     //функции добавления тасок и отслеживание value инпута
-    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const onChangeHandler =(event: ChangeEvent<HTMLInputElement>) => {
         setName(event.currentTarget.value)
-        setError(null)
     }
 
     const onAddHandler = () => {
@@ -30,6 +29,9 @@ export const InputText: FC<IInputText> = ({type, value, onAdd, className}) => {
     }
 
     const changeKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
+        if(error !== null) {
+            setError(null)
+        }
         if (event.key === 'Enter' && event.ctrlKey) {
             onAddHandler()
             setName('')
@@ -52,4 +54,4 @@ export const InputText: FC<IInputText> = ({type, value, onAdd, className}) => {
             </IconButton>
         </div>
     );
-};
+});

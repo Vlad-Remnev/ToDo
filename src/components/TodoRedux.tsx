@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import {IFilter} from "../App";
 import {InputText} from "./InputText/InputText";
 import {Tasks} from "./Tasks";
@@ -8,7 +8,6 @@ import {Delete} from "@mui/icons-material";
 import {addTaskAC, changeStatusTaskAC, changeTitleTaskAC, removeTaskAC} from "../reducers/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "../store/store";
-import {ITasksState} from "../AppWithRedux";
 
 export interface ITasks {
     id: string
@@ -25,7 +24,7 @@ interface ITodo {
     filter: IFilter
 }
 
-export const TodoRedux: FC<ITodo> = ({
+export const TodoRedux: FC<ITodo> = React.memo(({
                                     title,
                                     id,
                                     changeFilter,
@@ -33,26 +32,28 @@ export const TodoRedux: FC<ITodo> = ({
                                     removeTodoList,
                                     changeToDoListTitle
                                 }) => {
+
     const dispatch = useDispatch()
 
     const tasks = useSelector<AppRootState, ITasks[]>(state => state.tasks[id] )
 
-    const removeTask = (id: string, todoListId: string) => {
+    const removeTask = useCallback((id: string, todoListId: string) => {
         dispatch(removeTaskAC(id, todoListId))
-    } // функция удаления таски, благодаря useState компонента перерисовывается
+    }, [dispatch]) // функция удаления таски, благодаря useState компонента перерисовывается
 
-    const changeStatus = (taskId: string, isDone: boolean, todoListId: string) => {
+    const changeStatus = useCallback((taskId: string, isDone: boolean, todoListId: string) => {
         dispatch(changeStatusTaskAC(taskId, isDone, todoListId))
-    }
+    }, [dispatch])
 
-    const changeTitle = (taskId: string, newTitle: string, todoListId: string) => {
+    const changeTitle = useCallback((taskId: string, newTitle: string, todoListId: string) => {
+
         dispatch(changeTitleTaskAC(taskId, newTitle, todoListId))
-    }
+    }, [dispatch])
 
     //функции фильтра по кнопкам
-    const onAllClickHandler = () => changeFilter('all', id)
-    const onActiveClickHandler = () => changeFilter('active', id)
-    const onCompletedClickHandler = () => changeFilter('completed', id)
+    const onAllClickHandler = useCallback(() => changeFilter('all', id), [changeFilter, id])
+    const onActiveClickHandler = useCallback(() => changeFilter('active', id), [changeFilter, id])
+    const onCompletedClickHandler = useCallback(() => changeFilter('completed', id), [changeFilter, id])
     //условия для работы фильтрации
     let allToDoListTasks = tasks
     if (filter === 'completed') {
@@ -62,13 +63,15 @@ export const TodoRedux: FC<ITodo> = ({
         allToDoListTasks = allToDoListTasks.filter(task => !task.isDone)
     }
     //функция удаления ToDoList с тасками
-    const onRemoveTodoList = () => removeTodoList(id)
-    const changeToDoListTitleHandler = (title: string) => {
-        changeToDoListTitle(title, id)
-    }
-    const addTask = (title: string) => {
+    const onRemoveTodoList = useCallback(() => removeTodoList(id), [removeTodoList, id])
+
+    const changeToDoListTitleHandler = useCallback((newTitle: string) => {
+        changeToDoListTitle(newTitle, id)
+    }, [changeToDoListTitle, id])
+
+    const addTask = useCallback((title: string) => {
         dispatch(addTaskAC(title, id))
-    }
+    }, [dispatch, id])
     return (
         <div className='toDo'>
             <h3>
@@ -100,4 +103,4 @@ export const TodoRedux: FC<ITodo> = ({
             </ul>
         </div>
     );
-};
+});

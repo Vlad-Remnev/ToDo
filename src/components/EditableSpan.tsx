@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FC, KeyboardEvent, useState} from 'react';
+import React, {ChangeEvent, FC, KeyboardEvent, useCallback, useState} from 'react';
 import s from "./InputCheckBox/InputCheckBox.module.css";
 import {TextField} from "@mui/material";
 
@@ -8,21 +8,21 @@ interface IEditableSpan {
     onChange: (newValue: string) => void
 }
 
-export const EditableSpan: FC<IEditableSpan> = ({title, checked, onChange}) => {
+export const EditableSpan: FC<IEditableSpan> = React.memo(({title, checked, onChange}) => {
     const [editMode, setEditMode] = useState(false)
-    const [newTitle, setNewTitle] = useState('')
-
+    const [newTitle, setNewTitle] = useState(title)
     const activateEditMode = () => {
-        setEditMode(!editMode)
-        setNewTitle(title)
-        onChange(newTitle)
+        setEditMode(true)
     }
+
+    const onBlur = useCallback(() => {
+        setEditMode(false)
+        onChange(newTitle)
+    }, [onChange, newTitle])
 
     const changeKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter' && event.ctrlKey) {
-            setEditMode(!editMode)
-            setNewTitle(title)
-            onChange(newTitle)
+            onBlur()
         }
     }
 
@@ -33,10 +33,10 @@ export const EditableSpan: FC<IEditableSpan> = ({title, checked, onChange}) => {
     return editMode
         ? <TextField
             onKeyDown={changeKeyPress}
-            onBlur={activateEditMode}
+            onBlur={onBlur}
             onChange={onChangeTitleHandler}
             value={newTitle}
             autoFocus
             variant="standard"/>
         : <span onDoubleClick={activateEditMode} className={checked ? s.isDone : s.activeDone}>{title}</span>
-}
+})

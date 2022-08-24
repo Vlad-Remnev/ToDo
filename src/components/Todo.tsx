@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useCallback} from 'react';
 import {IFilter} from "../App";
 import {InputText} from "./InputText/InputText";
 import {Tasks} from "./Tasks";
@@ -26,7 +26,7 @@ interface ITodo {
     filter: IFilter
 }
 
-export const Todo: FC<ITodo> = ({
+export const Todo: FC<ITodo> = React.memo(({
                                     title,
                                     id,
                                     tasks,
@@ -41,9 +41,9 @@ export const Todo: FC<ITodo> = ({
                                 }) => {
 
     //функции фильтра по кнопкам
-    const onAllClickHandler = () => changeFilter('all', id)
-    const onActiveClickHandler = () => changeFilter('active', id)
-    const onCompletedClickHandler = () => changeFilter('completed', id)
+    const onAllClickHandler = useCallback(() => changeFilter('all', id), [])
+    const onActiveClickHandler = useCallback(() => changeFilter('active', id), [])
+    const onCompletedClickHandler = useCallback(() => changeFilter('completed', id), [])
     //условия для работы фильтрации
     let allToDoListTasks = tasks[id]
     if (filter === 'completed') {
@@ -53,13 +53,13 @@ export const Todo: FC<ITodo> = ({
         allToDoListTasks = allToDoListTasks.filter(task => !task.isDone)
     }
     //функция удаления ToDoList с тасками
-    const onRemoveTodoList = () => removeTodoList(id)
-    const changeToDoListTitleHandler = (title: string) => {
+    const onRemoveTodoList = useCallback(() => removeTodoList(id), [])
+    const changeToDoListTitleHandler = useCallback((title: string) => {
         changeToDoListTitle(title, id)
-    }
-    const addNewTask = (title: string) => {
+    }, [])
+    const addNewTask = useCallback((title: string) => {
         addTask(title, id)
-    }
+    }, [])
     return (
         <div className='toDo'>
             <h3>
@@ -91,4 +91,4 @@ export const Todo: FC<ITodo> = ({
             </ul>
         </div>
     );
-};
+});

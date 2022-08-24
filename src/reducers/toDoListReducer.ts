@@ -12,6 +12,7 @@ export const toDoListReducer = (state: IToDoLists[] = initialState, action: toDo
                 : todoList)
         }
         case "CHANGE-TODOLIST": {
+            console.log('actionTodo', action)
             return state.map(todolist => todolist.id === action.payload.todoListId ?
                 {...todolist, title: action.payload.newTitle}
                 : todolist)

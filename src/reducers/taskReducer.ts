@@ -30,6 +30,7 @@ export const tasksReducer = (state: ITasksState = initialState, action: taskRedu
             }
         }
         case "CHANGE-TITLE": {
+            console.log('actionTask', action)
             return {
                 ...state,
                 [action.payload.todoListId]:

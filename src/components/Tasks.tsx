@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {ITasks} from "./Todo";
-import {InputCheckBox} from "./InputCheckBox/InputCheckBox";
+import {Task} from "./InputCheckBox/Task";
+import {v1} from "uuid";
 
 interface ITasksProps {
     tasks: ITasks[]
@@ -10,21 +11,22 @@ interface ITasksProps {
     changeTaskTitle: (taskId: string, newValue: string, taskTodoId: string) => void
 }
 
-export const Tasks: FC<ITasksProps> = ({tasks, removeTask, changeTaskStatus, toDoListId, changeTaskTitle}) => {
+export const Tasks: FC<ITasksProps> = React.memo(({tasks, removeTask, changeTaskStatus, toDoListId, changeTaskTitle}) => {
     return (
         <>
             {
                 tasks.length
                     ? tasks.map(task => {
                         return (
-                            <li key={task.id}>
-                                <InputCheckBox title={task.title}
-                                               id={toDoListId}
-                                               taskId={task.id}
-                                               checked={task.isDone}
-                                               removeTaskTitle={removeTask}
-                                               onChecked={changeTaskStatus}
-                                               onChangeTaskTitle={changeTaskTitle}/>
+                            <li key={v1()}>
+                                <Task
+                                    title={task.title}
+                                    id={toDoListId}
+                                    taskId={task.id}
+                                    checked={task.isDone}
+                                    removeTaskTitle={removeTask}
+                                    onChecked={changeTaskStatus}
+                                    onChangeTaskTitle={changeTaskTitle}/>
                             </li>
                         )
                     })
@@ -32,4 +34,4 @@ export const Tasks: FC<ITasksProps> = ({tasks, removeTask, changeTaskStatus, toD
             }
         </>
     );
-};
+});

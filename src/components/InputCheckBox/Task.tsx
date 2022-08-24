@@ -1,5 +1,4 @@
-import React, {ChangeEvent, FC} from 'react';
-import s from './InputCheckBox.module.css'
+import React, {ChangeEvent, FC, useCallback} from 'react';
 import {EditableSpan} from "../EditableSpan";
 import {Checkbox, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
@@ -14,7 +13,7 @@ interface IInputCheckBox {
     onChangeTaskTitle: (taskId: string, newValue: string, todoListId: string) => void
 }
 
-export const InputCheckBox: FC<IInputCheckBox> = ({
+export const Task: FC<IInputCheckBox> = React.memo(({
                                                       title,
                                                       taskId,
                                                       checked,
@@ -29,9 +28,10 @@ export const InputCheckBox: FC<IInputCheckBox> = ({
     const onChangeCheckboxHandler = (event: ChangeEvent<HTMLInputElement>) => {
         onChecked(taskId, event.currentTarget.checked, id)
     }
-    const onChangeTitleHandler = (newValue: string) => {
+    const onChangeTitleHandler = useCallback((newValue: string) => {
+        console.log('newTitle', newValue)
         onChangeTaskTitle(taskId, newValue, id)
-    }
+    }, [onChangeTaskTitle, taskId, id])
     return (
         <>
             <div>
@@ -45,4 +45,4 @@ export const InputCheckBox: FC<IInputCheckBox> = ({
             </IconButton>
         </>
     );
-};
+});
