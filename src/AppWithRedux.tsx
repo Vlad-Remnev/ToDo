@@ -29,7 +29,7 @@ export interface ITasksState {
     [key: string]: Array<ITasks>
 }
 
-function AppWithRedux() {
+export const AppWithRedux = React.memo(() => {
     const dispatch = useDispatch()
     const todoLists = useSelector<AppRootState, IToDoLists[]>(state => state.todolists)
     // const tasks = useSelector<AppRootState, ITasksState>(state => state.tasks )
@@ -105,6 +105,4 @@ function AppWithRedux() {
             </Container>
         </div>
     );
-}
-
-export default AppWithRedux;
+})
