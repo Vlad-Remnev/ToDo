@@ -1,8 +1,8 @@
 import React, {FC, useCallback} from 'react';
 import {IFilter} from "../App";
 import {InputText} from "./InputText/InputText";
-import {Tasks} from "./Tasks";
-import {EditableSpan} from "./EditableSpan";
+import {Tasks} from "./Tasks/Tasks";
+import {EditableSpan} from "./EditableSpan/EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 

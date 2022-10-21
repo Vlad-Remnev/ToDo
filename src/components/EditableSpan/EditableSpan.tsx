@@ -1,5 +1,5 @@
 import React, {ChangeEvent, FC, KeyboardEvent, useCallback, useState} from 'react';
-import s from "./InputCheckBox/InputCheckBox.module.css";
+import s from "../Task/Task.module.css";
 import {TextField} from "@mui/material";
 
 interface IEditableSpan {

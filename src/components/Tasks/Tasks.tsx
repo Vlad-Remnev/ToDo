@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
-import {ITasks} from "./Todo";
-import {Task} from "./InputCheckBox/Task";
+import {ITasks} from "../Todo";
+import {Task} from "../Task/Task";
 import {v1} from "uuid";
 
 interface ITasksProps {

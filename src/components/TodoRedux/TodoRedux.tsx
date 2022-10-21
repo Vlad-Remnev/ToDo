@@ -1,13 +1,13 @@
 import React, {FC, useCallback} from 'react';
-import {IFilter} from "../App";
-import {InputText} from "./InputText/InputText";
-import {Tasks} from "./Tasks";
-import {EditableSpan} from "./EditableSpan";
+import {IFilter} from "../../App";
+import {InputText} from "../InputText/InputText";
+import {Tasks} from "../Tasks/Tasks";
+import {EditableSpan} from "../EditableSpan/EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
-import {addTaskAC, changeStatusTaskAC, changeTitleTaskAC, removeTaskAC} from "../reducers/taskReducer";
+import {addTaskAC, changeStatusTaskAC, changeTitleTaskAC, removeTaskAC} from "../../reducers/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
-import {AppRootState} from "../store/store";
+import {AppRootState} from "../../store/store";
 
 export interface ITasks {
     id: string

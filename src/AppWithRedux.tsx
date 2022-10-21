@@ -15,7 +15,7 @@ import {
 } from "./reducers/toDoListReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./store/store";
-import {TodoRedux} from "./components/TodoRedux";
+import {TodoRedux} from "./components/TodoRedux/TodoRedux";
 
 export type IFilter = 'all' | 'active' | 'completed'
 
