@@ -1,6 +1,6 @@
-import React, {useReducer, useState} from 'react';
+import React, {useReducer} from 'react';
 import './App.css';
-import {ITasks, Todo} from "./components/Todo";
+import {Todo} from "./components/Todo";
 import {v1} from "uuid";
 import {InputText} from "./components/InputText/InputText";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
@@ -15,20 +15,14 @@ import {
 } from "./reducers/taskReducer";
 import {
     changeToDoListTitleAC,
-    filterToDOListAC,
-    toDoListReducer
+    filterToDOListAC, toDoListReducer
 } from "./reducers/toDoListReducer";
+import {ITask, TaskPriorities, TaskStatuses} from "./api/todolists-api";
 
 export type IFilter = 'all' | 'active' | 'completed'
 
-export interface IToDoLists {
-    id: string
-    title: string
-    filter: IFilter
-}
-
 export interface ITasksState {
-    [key: string]: Array<ITasks>
+    [key: string]: ITask[]
 }
 
 export const App = React.memo(() => {
@@ -41,26 +35,46 @@ export const App = React.memo(() => {
             {
                 id: todolistID1,
                 title: 'What to Learn',
-                filter: 'all'
+                filter: 'all',
+                addedDate: '',
+                order: 0
             },
             {
                 id: todolistID2,
                 title: 'What to Buy',
-                filter: 'all'
+                filter: 'all',
+                addedDate: '',
+                order: 0
             }
         ]
     )
 
     const [tasks, tasksDispatch] = useReducer(tasksReducer, {
         [todolistID1]: [
-            {id: v1(), title: 'HTML&CSS', isDone: true},
-            {id: v1(), title: 'JS', isDone: true},
-            {id: v1(), title: 'ReactJS', isDone: false},
-
+            {   id: v1(),
+                title: 'HTML&CSS',
+                status: TaskStatuses.New,
+                description: '',
+                todoListId: todolistID1,
+                startDate: '',
+                deadline: '',
+                addedDate: '',
+                order: 0,
+                priority: TaskPriorities.Low
+            }
         ],
         [todolistID2]: [
-            {id: v1(), title: 'Rest API', isDone: true},
-            {id: v1(), title: 'GraphQL', isDone: false},
+            {   id: v1(),
+                title: 'React',
+                status: TaskStatuses.New,
+                description: '',
+                todoListId: todolistID1,
+                startDate: '',
+                deadline: '',
+                addedDate: '',
+                order: 0,
+                priority: TaskPriorities.Low
+            }
         ]
     })
 
@@ -76,8 +90,8 @@ export const App = React.memo(() => {
         tasksDispatch(addTaskAC(title, todoListId))
     } // делаем наш стейт иммутабельным для изменения
 
-    const changeStatus = (taskId: string, isDone: boolean, todoListId: string) => {
-        tasksDispatch(changeStatusTaskAC(taskId, isDone, todoListId))
+    const changeStatus = (taskId: string, status: TaskStatuses, todoListId: string) => {
+        tasksDispatch(changeStatusTaskAC(taskId, status, todoListId))
     }
 
     const addToDoList = (title: string) => {

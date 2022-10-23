@@ -2,43 +2,38 @@ import React, {ChangeEvent, FC, useCallback} from 'react';
 import {EditableSpan} from "../EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
+import {ITask, TaskStatuses} from "../../api/todolists-api";
 
 interface IInputCheckBox {
-    title: string
-    id: string
-    taskId: string
-    checked: boolean
+    task: ITask
     removeTaskTitle: (id: string, todoListId: string) => void
-    onChecked: (taskId: string, isDone: boolean, todoListId: string) => void
+    onChecked: (taskId: string, status: TaskStatuses, todoListId: string) => void
     onChangeTaskTitle: (taskId: string, newValue: string, todoListId: string) => void
 }
 
 export const Task: FC<IInputCheckBox> = React.memo(({
-                                                      title,
-                                                      taskId,
-                                                      checked,
+                                                      task,
                                                       removeTaskTitle,
                                                       onChecked,
-                                                      id,
                                                       onChangeTaskTitle
                                                   }) => {
     //функция удаления по кнопке Х
-    const onRemoveHandler = () => removeTaskTitle(taskId, id)
+    const onRemoveHandler = () => removeTaskTitle(task.id, task.todoListId)
     //функция смены checked
     const onChangeCheckboxHandler = (event: ChangeEvent<HTMLInputElement>) => {
-        onChecked(taskId, event.currentTarget.checked, id)
+        onChecked(task.id, event.currentTarget.checked ? TaskStatuses.Completed : TaskStatuses.New, task.todoListId)
     }
     const onChangeTitleHandler = useCallback((newValue: string) => {
         console.log('newTitle', newValue)
-        onChangeTaskTitle(taskId, newValue, id)
-    }, [onChangeTaskTitle, taskId, id])
+        onChangeTaskTitle(task.id, newValue, task.todoListId)
+    }, [onChangeTaskTitle, task.id, task.todoListId])
     return (
         <>
             <div>
                 <Checkbox onChange={onChangeCheckboxHandler}
-                          checked={checked}
+                          checked={task.status === TaskStatuses.Completed}
                           color='primary'/>
-                <EditableSpan title={title} checked={checked} onChange={onChangeTitleHandler}/>
+                <EditableSpan title={task.title} checked={task.status} onChange={onChangeTitleHandler}/>
             </div>
             <IconButton onClick={onRemoveHandler} color="primary">
                 <Delete/>

@@ -1,10 +1,16 @@
-import {IFilter, IToDoLists} from "../App";
 import {addToDoListActionType, deleteToDoListActionType} from "./taskReducer";
+import {IToDoList} from "../api/todolists-api";
 
 
-const initialState: IToDoLists[] = []
+const initialState: ITodoListDomain[] = []
 
-export const toDoListReducer = (state: IToDoLists[] = initialState, action: toDoListReducer) => {
+export type IFilter = 'all' | 'active' | 'completed'
+
+export type ITodoListDomain = IToDoList & {
+    filter: IFilter
+}
+
+export const toDoListReducer = (state: ITodoListDomain[] = initialState, action: toDoListReducerType): ITodoListDomain[] => {
     switch (action.type) {
         case 'CHANGE-FILTER': {
             return state.map(todoList => todoList.id === action.payload.todoListId ?
@@ -18,7 +24,7 @@ export const toDoListReducer = (state: IToDoLists[] = initialState, action: toDo
                 : todolist)
         }
         case "ADD-TODOLIST": {
-            let newToDo: IToDoLists = {id: action.payload.id, title: action.payload.title, filter: 'all'}
+            let newToDo: ITodoListDomain = {id: action.payload.id, title: action.payload.title, filter: 'all', addedDate: '', order: 0}
             return [newToDo, ...state]
         }
         case "DELETE-TODOLIST": {
@@ -29,7 +35,7 @@ export const toDoListReducer = (state: IToDoLists[] = initialState, action: toDo
     }
 }
 
-type toDoListReducer =
+export type toDoListReducerType =
     filterToDOListActionType
     | deleteToDoListActionType
     | changeToDoListTitleActionType

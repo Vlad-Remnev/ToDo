@@ -1,13 +1,13 @@
 import React, {FC} from 'react';
-import {ITasks} from "../Todo";
 import {Task} from "../Task/Task";
 import {v1} from "uuid";
+import {ITask, TaskStatuses} from "../../api/todolists-api";
 
 interface ITasksProps {
-    tasks: ITasks[]
+    tasks: ITask[]
     removeTask: (taskId: string, taskTodoId: string) => void
     toDoListId: string
-    changeTaskStatus: (taskId: string, isDone: boolean, taskTodoId: string) => void
+    changeTaskStatus: (taskId: string, status: TaskStatuses, taskTodoId: string) => void
     changeTaskTitle: (taskId: string, newValue: string, taskTodoId: string) => void
 }
 
@@ -20,10 +20,7 @@ export const Tasks: FC<ITasksProps> = React.memo(({tasks, removeTask, changeTask
                         return (
                             <li key={v1()}>
                                 <Task
-                                    title={task.title}
-                                    id={toDoListId}
-                                    taskId={task.id}
-                                    checked={task.isDone}
+                                    task={task}
                                     removeTaskTitle={removeTask}
                                     onChecked={changeTaskStatus}
                                     onChangeTaskTitle={changeTaskTitle}/>

@@ -1,6 +1,5 @@
 import React, {useCallback} from 'react';
 import './App.css';
-import {ITasks} from "./components/Todo";
 import {v1} from "uuid";
 import {InputText} from "./components/InputText/InputText";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
@@ -11,28 +10,17 @@ import {
 } from "./reducers/taskReducer";
 import {
     changeToDoListTitleAC,
-    filterToDOListAC,
+    filterToDOListAC, IFilter, ITodoListDomain,
 } from "./reducers/toDoListReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./store/store";
 import {TodoRedux} from "./components/TodoRedux/TodoRedux";
 
-export type IFilter = 'all' | 'active' | 'completed'
 
-export interface IToDoLists {
-    id: string
-    title: string
-    filter: IFilter
-}
-
-export interface ITasksState {
-    [key: string]: Array<ITasks>
-}
 
 export const AppWithRedux = React.memo(() => {
     const dispatch = useDispatch()
-    const todoLists = useSelector<AppRootState, IToDoLists[]>(state => state.todolists)
-    // const tasks = useSelector<AppRootState, ITasksState>(state => state.tasks )
+    const todoLists = useSelector<AppRootState, ITodoListDomain[]>(state => state.todolists)
     const changeFilter = useCallback((value: IFilter, todoListId: string) => {
         dispatch(filterToDOListAC(value, todoListId))
     }, [dispatch])
@@ -45,7 +33,7 @@ export const AppWithRedux = React.memo(() => {
     //     dispatch(addTaskAC(title, todoListId))
     // } // делаем наш стейт иммутабельным для изменения
     //
-    // const changeStatus = (taskId: string, isDone: boolean, todoListId: string) => {
+    // const changeStatus = (taskId: string, status: TaskStatuses, todoListId: string) => {
     //     dispatch(changeStatusTaskAC(taskId, isDone, todoListId))
     // }
     //

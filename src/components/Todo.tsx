@@ -1,26 +1,21 @@
 import React, {FC, useCallback} from 'react';
-import {IFilter} from "../App";
 import {InputText} from "./InputText/InputText";
 import {Tasks} from "./Tasks/Tasks";
 import {EditableSpan} from "./EditableSpan/EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
-
-export interface ITasks {
-    id: string
-    title: string
-    isDone: boolean
-}
+import {ITask, TaskStatuses} from "../api/todolists-api";
+import {IFilter} from "../reducers/toDoListReducer";
 
 interface ITodo {
     title: string
     id: string
-    tasks: { [key: string]: ITasks[] }
+    tasks: { [key: string]: ITask[] }
     removeTask: (id: string, todoListId: string) => void
     removeTodoList: (todoListId: string) => void
     changeFilter: (value: IFilter, todoListId: string) => void
     addTask: (title: string, todoListId: string) => void
-    changeStatus: (id: string, isDone: boolean, todoListId: string) => void
+    changeStatus: (id: string, status: TaskStatuses, todoListId: string) => void
     changeTitle: (id: string, newValue: string, todoListId: string) => void
     changeToDoListTitle: (newValue: string, todoListId: string) => void
     filter: IFilter
@@ -47,10 +42,10 @@ export const Todo: FC<ITodo> = React.memo(({
     //условия для работы фильтрации
     let allToDoListTasks = tasks[id]
     if (filter === 'completed') {
-        allToDoListTasks = allToDoListTasks.filter(task => task.isDone)
+        allToDoListTasks = allToDoListTasks.filter(task => task.status === TaskStatuses.Completed)
     }
     if (filter === 'active') {
-        allToDoListTasks = allToDoListTasks.filter(task => !task.isDone)
+        allToDoListTasks = allToDoListTasks.filter(task => task.status === TaskStatuses.New)
     }
     //функция удаления ToDoList с тасками
     const onRemoveTodoList = useCallback(() => removeTodoList(id), [])

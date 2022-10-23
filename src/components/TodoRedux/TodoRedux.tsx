@@ -8,12 +8,7 @@ import {Delete} from "@mui/icons-material";
 import {addTaskAC, changeStatusTaskAC, changeTitleTaskAC, removeTaskAC} from "../../reducers/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "../../store/store";
-
-export interface ITasks {
-    id: string
-    title: string
-    isDone: boolean
-}
+import {ITask, TaskStatuses} from "../../api/todolists-api";
 
 interface ITodo {
     title: string
@@ -35,14 +30,14 @@ export const TodoRedux: FC<ITodo> = React.memo(({
 
     const dispatch = useDispatch()
 
-    const tasks = useSelector<AppRootState, ITasks[]>(state => state.tasks[id] )
+    const tasks = useSelector<AppRootState, ITask[]>(state => state.tasks[id] )
 
     const removeTask = useCallback((id: string, todoListId: string) => {
         dispatch(removeTaskAC(id, todoListId))
     }, [dispatch]) // функция удаления таски, благодаря useState компонента перерисовывается
 
-    const changeStatus = useCallback((taskId: string, isDone: boolean, todoListId: string) => {
-        dispatch(changeStatusTaskAC(taskId, isDone, todoListId))
+    const changeStatus = useCallback((taskId: string, status: TaskStatuses, todoListId: string) => {
+        dispatch(changeStatusTaskAC(taskId, status, todoListId))
     }, [dispatch])
 
     const changeTitle = useCallback((taskId: string, newTitle: string, todoListId: string) => {
@@ -57,10 +52,10 @@ export const TodoRedux: FC<ITodo> = React.memo(({
     //условия для работы фильтрации
     let allToDoListTasks = tasks
     if (filter === 'completed') {
-        allToDoListTasks = allToDoListTasks.filter(task => task.isDone)
+        allToDoListTasks = allToDoListTasks.filter(task => task.status === TaskStatuses.Completed)
     }
     if (filter === 'active') {
-        allToDoListTasks = allToDoListTasks.filter(task => !task.isDone)
+        allToDoListTasks = allToDoListTasks.filter(task => task.status === TaskStatuses.New)
     }
     //функция удаления ToDoList с тасками
     const onRemoveTodoList = useCallback(() => removeTodoList(id), [removeTodoList, id])

@@ -1,10 +1,11 @@
 import React, {ChangeEvent, FC, KeyboardEvent, useCallback, useState} from 'react';
 import s from "../Task/Task.module.css";
 import {TextField} from "@mui/material";
+import {TaskStatuses} from "../../api/todolists-api";
 
 interface IEditableSpan {
     title: string
-    checked?: boolean
+    checked?: TaskStatuses
     onChange: (newValue: string) => void
 }
 
@@ -38,5 +39,5 @@ export const EditableSpan: FC<IEditableSpan> = React.memo(({title, checked, onCh
             value={newTitle}
             autoFocus
             variant="standard"/>
-        : <span onDoubleClick={activateEditMode} className={checked ? s.isDone : s.activeDone}>{title}</span>
+        : <span onDoubleClick={activateEditMode} className={checked === TaskStatuses.Completed ? s.isDone : s.activeDone}>{title}</span>
 })
