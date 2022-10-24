@@ -35,6 +35,26 @@ export interface ITask {
     addedDate: string
 }
 
+interface GetTasksResponse {
+    error: string | null
+    totalCount: number
+    items: ITask[]
+}
+
+interface ResponseType<T = {}> {
+    resultCode: number
+    messages: string[]
+    data: T
+}
+export interface UpdateTaskModel {
+    title: string
+    description: string
+    status: TaskStatuses
+    priority: TaskPriorities
+    startDate: string
+    deadline: string
+}
+
 const instance = axios.create({
     baseURL: `https://social-network.samuraijs.com/api/1.1/`,
     withCredentials: true,
@@ -47,8 +67,8 @@ export const toDoListsAPI = {
     getToDoLists() {
         return instance.get<IToDoList[]>(`todo-lists`)
     },
-    createToDoLists() {
-        return instance.post<ResponseType<{item: IToDoList}>>(`todo-lists`, {title: 'REACTJS'})
+    createToDoLists(title: string) {
+        return instance.post<ResponseType<{item: IToDoList}>>(`todo-lists`, {title})
     },
     deleteToDoLists(toDoListId: string) {
         return instance.delete<ResponseType>(`todo-lists/${toDoListId}`)
@@ -65,27 +85,7 @@ export const toDoListsAPI = {
     deleteTask(toDoListId: string, taskId: string) {
         return instance.delete<ResponseType>(`todo-lists/${toDoListId}/tasks/${taskId}`)
     },
-    updateTask(toDoListId: string, taskId: string, title: string) {
-        return instance.put<UpdateTask>(`todo-lists/${toDoListId}/tasks/${taskId}`, {title})
+    updateTask(toDoListId: string, taskId: string, model: UpdateTaskModel) {
+        return instance.put<ResponseType<ITask>>(`todo-lists/${toDoListId}/tasks/${taskId}`, model)
     }
-}
-
-interface GetTasksResponse {
-    error: string | null
-    totalCount: number
-    items: ITask[]
-}
-
-interface ResponseType<T = {}> {
-    resultCode: number
-    messages: string[]
-    data: T
-}
-export interface UpdateTask {
-    title: string
-    description: string
-    status: number
-    priority: number
-    startDate: string
-    deadline: string
 }
