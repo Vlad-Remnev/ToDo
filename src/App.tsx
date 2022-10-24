@@ -6,16 +6,14 @@ import {InputText} from "./components/InputText/InputText";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import {Menu} from "@mui/icons-material";
 import {
-    addTaskAC,
-    addToDoListAC,
-    changeStatusTaskAC,
-    changeTitleTaskAC, deleteToDoListAC,
+    addTaskTC,
     removeTaskAC,
-    tasksReducer
+    tasksReducer, updateTaskTC
 } from "./reducers/taskReducer";
 import {
+    addToDoListTC,
     changeToDoListTitleAC,
-    filterToDOListAC, toDoListReducer
+    filterToDOListAC, removeToDoListTC, toDoListReducer
 } from "./reducers/toDoListReducer";
 import {ITask, TaskPriorities, TaskStatuses} from "./api/todolists-api";
 
@@ -87,26 +85,40 @@ export const App = React.memo(() => {
     } // функция удаления таски, благодаря useState компонента перерисовывается
 
     const addTask = (title: string, todoListId: string) => {
-        tasksDispatch(addTaskAC(title, todoListId))
+        const task = { id: v1(),
+            title: 'React',
+            status: TaskStatuses.New,
+            description: '',
+            todoListId: todolistID1,
+            startDate: '',
+            deadline: '',
+            addedDate: '',
+            order: 0,
+            priority: TaskPriorities.Low
+        }
+        // @ts-ignore
+        tasksDispatch(addTaskTC(task, todoListId))
     } // делаем наш стейт иммутабельным для изменения
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     const changeStatus = (taskId: string, status: TaskStatuses, todoListId: string) => {
-        tasksDispatch(changeStatusTaskAC(taskId, status, todoListId))
+        // @ts-ignore
+        tasksDispatch(updateTaskTC(todoListId, taskId, {status}))
     }
 
     const addToDoList = (title: string) => {
-        const id = v1()
-        todoListsDispatch(addToDoListAC(title, id))
-        tasksDispatch(addToDoListAC(title, id))
+        // @ts-ignore
+        tasksDispatch(addToDoListTC(title))
     }
 
     const removeTodoList = (todoListId: string) => {
-        todoListsDispatch(deleteToDoListAC(todoListId))
-        tasksDispatch(deleteToDoListAC(todoListId))
+        // @ts-ignore
+        todoListsDispatch(removeToDoListTC(todoListId))
     }
 
     const changeTitle = (taskId: string, newTitle: string, todoListId: string) => {
-        tasksDispatch(changeTitleTaskAC(taskId, newTitle, todoListId))
+        // @ts-ignore
+        tasksDispatch(updateTaskTC(todoListId, taskId, {title: newTitle}))
     }
 
     const changeToDoListTitle = (newTitle: string, todoListId: string) => {
